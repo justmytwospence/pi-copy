@@ -21,12 +21,15 @@ export interface PickerModel {
 const BADGE: Record<Segment["kind"], string> = {
   user: "you",
   assistant: "reply",
+  section: "sect",
   code: "code",
   command: "cmd",
+  snippet: "snip",
   path: "path",
   url: "url",
   table: "table",
   list: "list",
+  quote: "quote",
   commit: "commit",
   paragraph: "text",
 };
