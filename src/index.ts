@@ -6,6 +6,7 @@
 import { copyToClipboard } from "@earendil-works/pi-coding-agent";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { loadConfig } from "./config.ts";
+import { whileBlocked } from "./herdr.ts";
 import { type JevConfig, askJev } from "./jev.ts";
 import { Picker, type PickerModel } from "./picker.ts";
 import { DEFAULT_RANK, type Judged, type RankSettings, chronological, piecesToJudge, rankQuestions, rankState, readJudgments, suggested } from "./rank.ts";
@@ -65,10 +66,12 @@ export default function piCopy(pi: ExtensionAPI) {
       : Promise.resolve(cache.size ? "done" : "unavailable");
     void ranking.then((state) => picker?.update(model(state)));
 
-    const chosen = await ctx.ui.custom<Segment | undefined>((tui, theme, _keybindings, done) => {
-      picker = new Picker(model(pending.length ? "pending" : cache.size ? "done" : "unavailable"), theme as never, () => tui.requestRender(), done);
-      return picker;
-    });
+    const chosen = await whileBlocked(pi.events, "Yank picker", () =>
+      ctx.ui.custom<Segment | undefined>((tui, theme, _keybindings, done) => {
+        picker = new Picker(model(pending.length ? "pending" : cache.size ? "done" : "unavailable"), theme as never, () => tui.requestRender(), done);
+        return picker;
+      }),
+    );
     controller.abort();
     if (!chosen) return;
     try {

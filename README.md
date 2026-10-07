@@ -31,6 +31,11 @@ Pi's built-in `/copy` (the last reply) and ctrl+x stay as they are: Pi's interac
 `/copy` before extension commands and reports an extension `/copy` as a conflict, so this extension
 uses its own name. Interactive terminal only.
 
+**herdr.** While the picker is open it holds `herdr:blocked` on pi's event bus
+(`{ active: true, label: "Yank picker" }`, then `{ active: false }` when it closes), so
+[herdr](https://herdr.dev) shows the pane as blocked. Outside herdr nothing listens and the events
+do nothing.
+
 ## Settings
 
 `~/.pi/agent/copy.json`, with `<project>/.pi/copy.json` merged on top:
